@@ -1,21 +1,26 @@
-// import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-// import { BASE_URL } from "../config/envConfig";
-// import axiosClient from "../api/axiosClient";
+import { createSlice } from "@reduxjs/toolkit";
 
-// const initialState = {
-//     accessToken: null,
-//     user: null,
-//     isAuthenticated: null,
-//     loading: false,
-//     error: null,
-// };
+const authSlice = createSlice({
+    name: "auth",
+    initialState: {
+        user: null,
+        token: null,
+        isAuthenticated: false,
+    },
+    reducers: {
+        setAuth: (state, action) => {
+            state.user = action.payload.user;
+            state.token = action.payload.token;
+            state.isAuthenticated = true;
+        },
+        logout: (state) => {
+            state.user = null;
+            state.token = null;
+            state.isAuthenticated = false;
+        }
+    }
+});
 
-// // AsyncThunks writing seperately ,bcos it cannot be directly supported in redux
-// export const login = createAsyncThunk(
-//     "auth/login",
-//     async (Credentials) => {
-//         const res = await axios.post(`${BASE_URL}`)
-//     }
-// )
-
-// const authSlice = createSlice
+export const { setAuth, logout } = authSlice.actions;
+const authSliceReducer =  authSlice.reducer;
+export default authSliceReducer
