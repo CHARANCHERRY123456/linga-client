@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosClient from "../../../service/axiosClient";
-import { type LoginReqType } from "../../../types/authTypes";
+import { type LoginReqType, type LoginResType } from "../../../types/authTypes";
 import { user_token } from "../../../constants/localStorageConstants";
 
 
@@ -9,6 +9,8 @@ export const signupService = createAsyncThunk(
     async (credentials: any, thunkAPI) => {
         try {
             let res = await axiosClient.post('/auth/signup', credentials);
+            const backend_token = res.data.access_token;
+            localStorage.setItem(user_token, backend_token);
             return res.data;
         } catch (error : any) {
             return thunkAPI.rejectWithValue(
@@ -23,6 +25,8 @@ export const loginService = createAsyncThunk(
     async (credentials: LoginReqType, thunkAPI) => {
         try {
             let res = await axiosClient.post("/auth/login", credentials);
+            const backend_token = res.data.access_token;
+            localStorage.setItem(user_token, backend_token);
             return res.data;
         } catch (error : any) {
             return thunkAPI.rejectWithValue(
@@ -37,7 +41,7 @@ export const getUser = createAsyncThunk(
   "auth/getUser",
   async (_, thunkAPI) => {
     try {
-        const token = localStorage.getItem(user_token);
+      const token = localStorage.getItem(user_token);
       let res = await axiosClient.get("/auth/user/" + token);
       return res.data;
     } catch (error : any ) {
