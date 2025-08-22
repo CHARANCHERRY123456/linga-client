@@ -12,7 +12,7 @@ export default function AppRouter() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
                 {/* private router */}
-                <Route path="/" element={
+                <Route path="/home" element={
                     <ProtectedRoute>
                         <HomePage />
                     </ProtectedRoute>

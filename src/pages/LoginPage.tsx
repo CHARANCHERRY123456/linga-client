@@ -3,7 +3,7 @@ import { loginService  } from "../store/slices/auth/authService";
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { type AuthRootState } from "../types/auth/authSliceTypes";
-import { type LoginReqType } from "../types/authTypes";
+import { type LoginReqType } from "../types/auth/authTypes";
 
 interface FormErrors {
     email?: string;

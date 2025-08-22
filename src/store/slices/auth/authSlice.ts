@@ -28,7 +28,7 @@ const authSlice = createSlice({
       .addCase(loginService.fulfilled, (state, action) => {
           state.loading = false;
           state.user = action.payload.user;
-          state.token = action.payload.token;
+          state.token = action.payload.access_token;
           state.isAuthenticated = true;
           toast.success("Login successful")
         })
@@ -45,7 +45,7 @@ const authSlice = createSlice({
         console.log("Signup fulfilled", action.payload);
         state.loading = false;
         state.user = action.payload.user;
-        state.token = action.payload.token;
+        state.token = action.payload.access_token;
         state.isAuthenticated = true;
         toast.success("Signup successful");
       })
