@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { signupService } from "../store/slices/auth/authService";
 import type { AuthRootState } from "../types/auth/authSliceTypes";
+import { toast } from "react-toastify";
 
 interface FormErrors {
     email?: string;
@@ -29,7 +30,6 @@ export default function SignupPage(){
     });
 
     const [errors, setErrors] = useState<FormErrors>({});
-    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -44,14 +44,11 @@ export default function SignupPage(){
         e.preventDefault();
         if(!validateForm()) return;
         
-        setIsSubmitting(true);
         try {
             const { confirmPassword, ...signupData } = formData;
             await dispatch(signupService(signupData) as any);
         } catch (err) {
             console.error("Signup failed:", err);
-        } finally {
-            setIsSubmitting(false);
         }
     };
 
@@ -101,17 +98,12 @@ export default function SignupPage(){
                         </svg>
                     </div>
                     <h2 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h2>
-                    <p className="text-gray-600">Join us to start chatting</p>
+                    <p className="text-gray-600">Join us to Learn English</p>
                 </div>
 
                 {/* Form */}
                 <form className="bg-white rounded-2xl shadow-xl p-8 space-y-6" onSubmit={handleSubmit}>
                     {/* Global Error */}
-                    {error && (
-                        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                            <p className="text-red-600 text-sm">{error}</p>
-                        </div>
-                    )}
 
                     {/* Username Field */}
                     <div>
@@ -208,10 +200,10 @@ export default function SignupPage(){
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        disabled={isSubmitting || isLoading}
+                        disabled={ isLoading}
                         className="w-full bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
                     >
-                        {isSubmitting || isLoading ? (
+                        {isLoading ? (
                             <>
                                 <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>

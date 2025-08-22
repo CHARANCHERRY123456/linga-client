@@ -93,12 +93,7 @@ export default function LoginPage() {
 
                 {/* Form */}
                 <form className="bg-white rounded-2xl shadow-xl p-8 space-y-6" onSubmit={handleSubmit}>
-                    {/* Global Error */}
-                    {error && (
-                        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                            <p className="text-red-600 text-sm">{error}</p>
-                        </div>
-                    )}
+
 
                     {/* Email Field */}
                     <div>

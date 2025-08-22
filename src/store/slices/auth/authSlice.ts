@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginService , signupService } from "./authService";
+import { toast } from "react-toastify";
 
 
 const authSlice = createSlice({
@@ -25,16 +26,16 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginService.fulfilled, (state, action) => {
-          console.log("Login fulfilled", action.payload);
           state.loading = false;
           state.user = action.payload.user;
           state.token = action.payload.token;
           state.isAuthenticated = true;
+          toast.success("Login successful")
         })
       .addCase(loginService.rejected, (state, action) => {
-        console.log("Login rejected", action.payload, action.error);
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload; 
+        toast.error(action.payload || "Login failed");
       })
       .addCase(signupService.pending , (state) => {
         state.loading = true;
@@ -46,11 +47,13 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
+        toast.success("Signup successful");
       })
       .addCase(signupService.rejected, (state, action) => {
         console.log("Signup rejected", action.payload, action.error);
         state.loading = false;
         state.error = action.payload;
+        toast.error(action.payload || "Signup failed");
       });
   },
 });
