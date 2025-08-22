@@ -6,11 +6,11 @@ export const login = createAsyncThunk(
   "auth/login",
   async (credentials : LoginReqType , thunkAPI) => {
     try {
-        alert("In the auth/login")
       let res=await loginService(credentials);
       return res
     } catch (error) {
-        alert("getting in error ")
+      console.log(error);
+      
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Login failed"
       );
@@ -37,7 +37,6 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
-        console.log("Login pending");
         state.loading = true;
         state.error = null;
       })
