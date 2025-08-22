@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux"
-import { login } from "../store/slices/authSlice";
+import { loginService  } from "../store/slices/auth/authService";
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { type AuthRootState } from "../types/auth/authSliceTypes";
@@ -68,7 +68,7 @@ export default function LoginPage() {
 
         setIsSubmitting(true);
         try {
-            await dispatch(login(formData) as any);
+            await dispatch(loginService(formData) as any);
             // useEffect will handle if isAuthenticated changed
         } catch (err) {
             console.error("Login failed:", err);
