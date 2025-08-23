@@ -1,13 +1,18 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchConversations } from "../../store/slices/conversation/conversationSlice";
-import CreateConversation from "./CreateConversation";
 import type { ConversationOut } from "../../types/conversation/ConversationTypes";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+import CreateConversation from "./CreateConversation";
 
 export default function ChatLayout() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { conversations, currentId, loading, error } = useSelector(s => s.conversation);
+
+    const handleClick = (id: string) => {
+        navigate(`${id}`);
+    };
 
     useEffect(() => {
         dispatch(fetchConversations());
@@ -36,7 +41,10 @@ export default function ChatLayout() {
                                     <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center font-bold text-gray-700 shadow">
                                         {convo.title[0]?.toUpperCase() || "?"}
                                     </div>
-                                    <span className="font-medium text-gray-800 truncate">{convo.title}</span>
+                                    <button onClick={() => handleClick(convo._id)}>
+                                        {convo.title}
+                                    </button>
+                                    {/* <span className="font-medium text-gray-800 truncate">{convo.title}</span> */}
                                 </li>
                             ))}
                         </ul>
