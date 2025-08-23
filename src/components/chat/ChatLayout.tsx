@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchConversations } from "../../store/slices/conversation/conversationSlice";
+import { fetchConversations, setCurrentConversationId } from "../../store/slices/conversation/conversationSlice";
 import type { ConversationOut } from "../../types/conversation/ConversationTypes";
 import { Outlet, useNavigate } from "react-router-dom";
 import CreateConversation from "./CreateConversation";
@@ -12,6 +12,7 @@ export default function ChatLayout() {
 
     const handleClick = (id: string) => {
         navigate(`${id}`);
+        dispatch(setCurrentConversationId(id));
     };
 
     useEffect(() => {

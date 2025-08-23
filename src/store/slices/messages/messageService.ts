@@ -1,14 +1,16 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import type { MessageCreate , MessageOut } from "../../../types/message/MessageType";
+import type { MessageOut } from "../../../types/message/MessageType";
 import axiosClient from "../../../service/axiosClient";
+import { getUserService } from "../../../service/authService";
 
 export const addMessageService = createAsyncThunk(
     "messages/addMessage",
-    async (message: MessageCreate , thunkAPI) => {
+    async ({message , chatId} , thunkAPI) => {
         try {
-            const curid = thunkAPI.getState().chat.currentId;
-            const res = await axiosClient.post<MessageOut>(`/message/${curid}/message` , message);
-            return res.data;
+            const user = await getUserService();
+            const curMessage = { ...message, sender_id: user.id };
+            const res = await axiosClient.post<MessageOut>(`/message/${chatId}/message` , curMessage);
+            return [curMessage, res.data ];
         } catch (error : any) {
             return thunkAPI.rejectWithValue(error.response.data.detail);
         }
@@ -17,10 +19,10 @@ export const addMessageService = createAsyncThunk(
 
 export const getHistoryService = createAsyncThunk(
     "messages/getHistory",
-    async (thunkAPI) => {
+    async (id , thunkAPI) => {
         try {
-            const curid = thunkAPI.getState().chat.currentId;
-            const res = await axiosClient.get<MessageOut[]>(`/message/${curid}/message`);
+            const res = await axiosClient.get<MessageOut[]>(`/message/${id}/history`);
+            console.log(res.data , "is the response from get history");
             return res.data;
         } catch (error : any) {
             return thunkAPI.rejectWithValue(error.response.data.detail);

@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { addMessageService ,getHistoryService } from "./messageService";
+import type { Message } from "../../../types/message/MessageType";
 
 
 const messageSlice = createSlice({
@@ -14,7 +15,10 @@ const messageSlice = createSlice({
             state.messages = [];
             state.loading = false;
             state.error = null;
-        }
+        },
+        addMessage : (state , action ) =>{
+            state.messages.push(action.payload);
+        } 
     },
     extraReducers: (builder) => {
         builder
@@ -24,7 +28,9 @@ const messageSlice = createSlice({
             })
             .addCase(addMessageService.fulfilled, (state, action) => {
                 state.loading = false;
-                state.messages.push(action.payload);
+                console.log(action.payload , "is the payload messages");
+                // state.messages.concat(action.payload);
+                state.messages = [...state.messages , ...action.payload];
             })
             .addCase(addMessageService.rejected, (state, action) => {
                 state.loading = false;

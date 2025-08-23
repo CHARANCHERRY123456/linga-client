@@ -79,6 +79,9 @@ const slice = createSlice({
     reducers: {
         setCurrentConversationId(state, action : {payload : string} ) {
             state.currentId = action.payload;
+        },
+        clearConversation(state){
+            state.currentId = null;
         }
     },
     extraReducers: (builder) => {

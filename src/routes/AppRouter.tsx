@@ -4,7 +4,7 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import SignupPage from "../pages/SignupPage";
 import { HomePage } from "../pages/HomePage";
 import ChatLayout from "../components/chat/ChatLayout";
-import ChatMessages from "../components/chat/ChatMessages";
+import ChatMessages from "../pages/ChatMessage";
 
 export default function AppRouter() {
     return (

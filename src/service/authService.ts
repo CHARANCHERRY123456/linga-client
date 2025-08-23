@@ -13,7 +13,6 @@ async function loginService(credentials : LoginReqType) : Promise<LoginResType> 
 async function getUserService() : Promise<User> {
     const token = localStorage.getItem(user_token);
     const res = await axiosClient.get("auth/user/" + token);
-    console.log(res.data);
     return res.data;
 }
 
