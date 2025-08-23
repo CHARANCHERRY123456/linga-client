@@ -18,12 +18,15 @@ const messageSlice = createSlice({
         },
         addMessage : (state , action ) =>{
             state.messages.push(action.payload);
-        } 
+        },
+        removeMessage: (state, action) => {
+            state.messages = state.messages.filter(msg => msg._id !== action.payload);
+        }
     },
     extraReducers: (builder) => {
         builder
             .addCase(addMessageService.pending, (state) => {
-                state.loading = true;
+                state.loading = false;
                 state.error = null;
             })
             .addCase(addMessageService.fulfilled, (state, action) => {
@@ -42,7 +45,7 @@ const messageSlice = createSlice({
             })
             .addCase(getHistoryService.fulfilled, (state, action) => {
                 state.loading = false;
-                state.messages = action.payload || [];
+                state.messages = action.payload ? [...action.payload].reverse() : [];
             })
             .addCase(getHistoryService.rejected, (state, action) => {
                 state.loading = false;
@@ -51,6 +54,6 @@ const messageSlice = createSlice({
     }
 })
 
-export const { clearMessagesState } = messageSlice.actions;
+export const { clearMessagesState , addMessage } = messageSlice.actions;
 const messageSliceReducer = messageSlice.reducer;
 export default messageSliceReducer;

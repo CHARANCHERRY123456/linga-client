@@ -8,7 +8,7 @@ export const addMessageService = createAsyncThunk(
     async ({message , chatId} , thunkAPI) => {
         try {
             const user = await getUserService();
-            const curMessage = { ...message, sender_id: user.id };
+            const curMessage = { ...message, sender_id: user.id};
             const res = await axiosClient.post<MessageOut>(`/message/${chatId}/message` , curMessage);
             return [curMessage, res.data ];
         } catch (error : any) {
