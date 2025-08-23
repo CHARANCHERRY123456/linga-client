@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
 import SignupPage from "../pages/SignupPage";
 import { HomePage } from "../pages/HomePage";
+import ChatLayout from "../components/chat/ChatLayout";
 
 export default function AppRouter() {
     return (
@@ -15,6 +16,11 @@ export default function AppRouter() {
                 <Route path="/home" element={
                     <ProtectedRoute>
                         <HomePage />
+                    </ProtectedRoute>
+                } />
+                <Route path="/chat" element={
+                    <ProtectedRoute>
+                        <ChatLayout />
                     </ProtectedRoute>
                 } />
             </Routes>
