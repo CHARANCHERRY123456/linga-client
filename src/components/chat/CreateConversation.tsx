@@ -1,17 +1,16 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { createConversation } from "../../store/slices/conversation/conversationSlice";
-import { useState } from "react";
+import React, { useState } from "react";
 
 export default function CreateConversation() {
     const [conversationName, setConversationName] = useState("");
     const dispatch = useDispatch();
-    const {conversations ,currentid , loading ,error } = useSelector(s=>s.conversation);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        dispatch(createConversation({title : conversationName}));
+        const payload  = { title: conversationName };
+        dispatch(createConversation(payload));
     };
-    console.log(conversations , currentid , loading , error );
     
 
     return (

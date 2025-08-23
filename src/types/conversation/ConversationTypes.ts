@@ -1,22 +1,30 @@
-export type CreateConversation = {
-    user_id: string;
-    description?: string;
-    image?: string;
-    title: string;
-};
+export interface ConversationCreatePayload {
+  user_id: string;
+  title: string;
+  description?: string;
+  image?: string;
+}
 
-export type CreateConversationOut = {
-    id : string
-    created_at : Date
-    last_message_at : Date | null
-};
+export interface ConversationOut {
+  _id: string; // maps to _id in backend
+  user_id: string;
+  title: string;
+  description?: string;
+  image?: string;
+  created_at: string; // ISO date string
+  last_message_at?: string | null;
+}
 
-export type Conversation = {
-    user_id: string;
-    description?: string;
-    image?: string;
-    title: string;
-    _id: string;
-    created_at: string; // ISO date string
-    last_message_at?: string; // ISO date string
-};
+// List response for all conversations of a user
+export interface ConversationOutList {
+  conversations: ConversationOut[];
+  total: number;
+}
+
+// Redux slice state type for conversations
+export interface ConversationState {
+  conversations: ConversationOut[];
+  currentId: string | null;
+  loading: boolean;
+  error: string | null;
+}
