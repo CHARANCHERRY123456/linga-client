@@ -1,1 +1,2 @@
 aug : 21  :: planning the project
+aug 22 :: auth redux and pages has done
