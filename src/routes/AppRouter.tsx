@@ -19,7 +19,7 @@ export default function AppRouter() {
                         <HomePage />
                     </ProtectedRoute>
                 } />
-                <Route path="/chat" element={
+                <Route path="/" element={
                     <ProtectedRoute>
                         <ChatLayout />
                     </ProtectedRoute>
