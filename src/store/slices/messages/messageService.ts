@@ -3,9 +3,14 @@ import type { MessageOut } from "../../../types/message/MessageType";
 import axiosClient from "../../../service/axiosClient";
 import { getUserService } from "../../../service/authService";
 
-export const addMessageService = createAsyncThunk(
+type AddMessagePayload = {
+    message: { content: string };
+    chatId: string;
+};
+
+export const addMessageService = createAsyncThunk<any[], AddMessagePayload, { rejectValue: string }>(
     "messages/addMessage",
-    async ({message , chatId} , thunkAPI) => {
+    async ({ message, chatId }, thunkAPI) => {
         try {
             const user = await getUserService();
             const curMessage = { ...message, sender_id: user.id};
@@ -17,9 +22,9 @@ export const addMessageService = createAsyncThunk(
     }
 );
 
-export const getHistoryService = createAsyncThunk(
+export const getHistoryService = createAsyncThunk<MessageOut[], string, { rejectValue: string }>(
     "messages/getHistory",
-    async (id , thunkAPI) => {
+    async (id, thunkAPI) => {
         try {
             const res = await axiosClient.get<MessageOut[]>(`/message/${id}/history`);
             console.log(res.data , "is the response from get history");

@@ -1,19 +1,22 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, type KeyboardEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { addMessageService, getHistoryService } from "../store/slices/messages/messageService";
-import { clearMessagesState, addMessage } from "../store/slices/messages/messageSlice";
+import { clearMessagesState } from "../store/slices/messages/messageSlice";
 
 export default function ChatMessages() {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<any>();
     const { id } = useParams();
-    const { conversations } = useSelector(s => s.conversation);
+    const { conversations } = useSelector((s: any) => s.conversation);
     const [input, setInput] = useState("");
     const [isSending, setIsSending] = useState(false);
-    const messagesEndRef = useRef(null);
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
+    const recognitionRef = useRef<any>(null);
+    const [isListening, setIsListening] = useState(false);
+    const [speechSupported, setSpeechSupported] = useState(false);
     
-    const currentConversation = conversations.find(convo => convo._id === id);
-    const { messages, loading, error } = useSelector(s => s.message);
+    const currentConversation = conversations.find((convo: any) => convo._id === id);
+    const { messages, loading, error } = useSelector((s: any) => s.message);
 
     // Auto scroll to bottom
     const scrollToBottom = () => {
@@ -33,8 +36,53 @@ export default function ChatMessages() {
         };
     }, [id, dispatch]);
 
+    useEffect(() => {
+        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+        if (!SpeechRecognition) {
+            setSpeechSupported(false);
+            return;
+        }
+
+        setSpeechSupported(true);
+        const recognition = new SpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.continuous = false;
+
+        recognition.onresult = (event: any) => {
+            const spokenText = event.results?.[0]?.[0]?.transcript?.trim() || "";
+            if (!spokenText) return;
+
+            setInput((previousInput) => {
+                const trimmedPrevious = previousInput.trim();
+                return trimmedPrevious ? `${trimmedPrevious} ${spokenText}` : spokenText;
+            });
+        };
+
+        recognition.onerror = () => {
+            setIsListening(false);
+        };
+
+        recognition.onend = () => {
+            setIsListening(false);
+        };
+
+        recognitionRef.current = recognition;
+
+        return () => {
+            recognitionRef.current?.stop();
+            recognitionRef.current = null;
+        };
+    }, []);
+
     const handleSendMessage = async () => {
         if (input.trim() === "" || isSending || !currentConversation) return;
+
+        if (isListening) {
+            recognitionRef.current?.stop();
+            setIsListening(false);
+        }
         
         const messageContent = input.trim();
         setIsSending(true);
@@ -52,7 +100,23 @@ export default function ChatMessages() {
         }
     };
 
-    const handleKeyPress = (e) => {
+    const handleStartStopVoice = () => {
+        if (!speechSupported || !recognitionRef.current || isSending || loading) return;
+
+        if (isListening) {
+            recognitionRef.current.stop();
+            return; 
+        }
+
+        try {
+            recognitionRef.current.start();
+            setIsListening(true);
+        } catch {
+            setIsListening(false);
+        }
+    };
+
+    const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             handleSendMessage();
@@ -75,7 +139,7 @@ export default function ChatMessages() {
         );
     }
 
-    const isBotMessage = (msg) => {
+    const isBotMessage = (msg: any) => {
         return msg.sender_id === "bot";
     };
     
@@ -146,7 +210,7 @@ export default function ChatMessages() {
                         <p className="text-gray-500">Start the conversation by sending a message below</p>
                     </div>
                 ) : (
-                    messages.map((msg, index) => {
+                    messages.map((msg: any, index: number) => {
                         const isBot = isBotMessage(msg);
                         const uniqueKey = msg._id || `message-${index}`;
                         
@@ -200,7 +264,7 @@ export default function ChatMessages() {
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyPress={handleKeyPress}
-                            placeholder="Type your message..."
+                            placeholder={speechSupported ? "Type or use mic to speak..." : "Type your message..."}
                             className="w-full border border-gray-300 rounded-full px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                             disabled={isSending || loading}
                         />
@@ -210,6 +274,22 @@ export default function ChatMessages() {
                             </span>
                         </div>
                     </div>
+
+                    <button
+                        onClick={handleStartStopVoice}
+                        disabled={!speechSupported || isSending || loading}
+                        className={`px-4 py-3 rounded-full font-medium transition-all duration-200 flex items-center justify-center shadow-sm ${
+                            isListening
+                                ? "bg-red-500 hover:bg-red-600 text-white"
+                                : "bg-gray-200 hover:bg-gray-300 text-gray-800 disabled:bg-gray-100 disabled:text-gray-400"
+                        }`}
+                        title={speechSupported ? (isListening ? "Stop voice input" : "Start voice input") : "Voice input not supported in this browser"}
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 1v11m0 0a3 3 0 003-3V5a3 3 0 10-6 0v4a3 3 0 003 3zm-7 0a7 7 0 0014 0m-7 7v4m-4 0h8" />
+                        </svg>
+                    </button>
+
                     <button
                         onClick={handleSendMessage}
                         disabled={input.trim() === "" || isSending || loading}
